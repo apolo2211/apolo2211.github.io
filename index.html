@@ -1,0 +1,980 @@
+<!DOCTYPE html>
+<html lang="fr" charset="UTF-8">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>OUERD SERAIDI — IA Multi-Services</title>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=Space+Mono:wght@400;700&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+  <style>
+    :root {
+      --bg: #050810;
+      --surface: #0d1120;
+      --surface2: #141929;
+      --border: rgba(100,180,255,0.12);
+      --accent: #00d4ff;
+      --accent2: #7c3aed;
+      --accent3: #f59e0b;
+      --text: #e8f0ff;
+      --muted: #6b7a99;
+      --glow: 0 0 40px rgba(0,212,255,0.15);
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: 'Outfit', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      overflow-x: hidden;
+      min-height: 100vh;
+    }
+
+    /* ── BACKGROUND MESH ── */
+    body::before {
+      content: '';
+      position: fixed; inset: 0; z-index: 0;
+      background:
+        radial-gradient(ellipse 80% 60% at 15% 10%, rgba(0,212,255,0.07) 0%, transparent 60%),
+        radial-gradient(ellipse 60% 50% at 85% 80%, rgba(124,58,237,0.08) 0%, transparent 60%),
+        radial-gradient(ellipse 40% 40% at 50% 50%, rgba(245,158,11,0.03) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    /* ── GRID OVERLAY ── */
+    body::after {
+      content: '';
+      position: fixed; inset: 0; z-index: 0;
+      background-image:
+        linear-gradient(rgba(100,180,255,0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(100,180,255,0.03) 1px, transparent 1px);
+      background-size: 60px 60px;
+      pointer-events: none;
+    }
+
+    /* ── NAV ── */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 1rem 2rem;
+      background: rgba(5,8,16,0.85);
+      backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--border);
+    }
+    .nav-logo {
+      font-family: 'Syne', sans-serif;
+      font-weight: 800; font-size: 1.3rem;
+      letter-spacing: -0.02em;
+      color: var(--text);
+    }
+    .nav-logo span { color: var(--accent); }
+    .nav-links { display: flex; gap: 2rem; }
+    .nav-links a {
+      font-family: 'Space Mono', monospace;
+      font-size: 0.75rem; letter-spacing: 0.08em;
+      color: var(--muted); text-decoration: none;
+      text-transform: uppercase;
+      transition: color 0.2s;
+    }
+    .nav-links a:hover { color: var(--accent); }
+    .nav-cta {
+      background: var(--accent); color: #000;
+      border: none; padding: 0.55rem 1.3rem;
+      font-family: 'Space Mono', monospace;
+      font-size: 0.75rem; font-weight: 700;
+      letter-spacing: 0.05em; text-transform: uppercase;
+      cursor: pointer; border-radius: 4px;
+      transition: transform 0.15s, box-shadow 0.15s;
+    }
+    .nav-cta:hover { transform: translateY(-1px); box-shadow: 0 0 20px rgba(0,212,255,0.4); }
+
+    /* ── SECTIONS WRAPPER ── */
+    section { position: relative; z-index: 1; }
+
+    /* ── HERO ── */
+    #hero {
+      min-height: 100vh;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      text-align: center;
+      padding: 6rem 1.5rem 4rem;
+    }
+    .hero-badge {
+      display: inline-flex; align-items: center; gap: 0.5rem;
+      font-family: 'Space Mono', monospace;
+      font-size: 0.7rem; letter-spacing: 0.12em; text-transform: uppercase;
+      color: var(--accent); border: 1px solid rgba(0,212,255,0.3);
+      padding: 0.4rem 1rem; border-radius: 999px;
+      margin-bottom: 2rem;
+      animation: fadeSlide 0.8s ease both;
+    }
+    .hero-badge::before {
+      content: ''; width: 6px; height: 6px;
+      background: var(--accent); border-radius: 50%;
+      animation: pulse 2s infinite;
+    }
+    @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.3} }
+
+    h1 {
+      font-family: 'Syne', sans-serif;
+      font-size: clamp(2.8rem, 8vw, 6.5rem);
+      font-weight: 800; line-height: 0.95;
+      letter-spacing: -0.04em;
+      animation: fadeSlide 0.8s 0.1s ease both;
+    }
+    h1 .line1 { display: block; color: var(--text); }
+    h1 .line2 {
+      display: block;
+      background: linear-gradient(135deg, var(--accent) 0%, var(--accent2) 100%);
+      -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;
+    }
+    .hero-sub {
+      margin-top: 1.5rem;
+      font-size: 1.1rem; color: var(--muted);
+      max-width: 520px; line-height: 1.65;
+      animation: fadeSlide 0.8s 0.2s ease both;
+    }
+    .hero-actions {
+      margin-top: 2.5rem;
+      display: flex; gap: 1rem; flex-wrap: wrap; justify-content: center;
+      animation: fadeSlide 0.8s 0.3s ease both;
+    }
+    .btn-primary {
+      background: var(--accent); color: #000;
+      border: none; padding: 0.85rem 2rem;
+      font-family: 'Space Mono', monospace;
+      font-weight: 700; font-size: 0.85rem;
+      letter-spacing: 0.04em; text-transform: uppercase;
+      cursor: pointer; border-radius: 6px;
+      transition: transform 0.15s, box-shadow 0.15s;
+    }
+    .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 0 30px rgba(0,212,255,0.5); }
+    .btn-secondary {
+      background: transparent; color: var(--text);
+      border: 1px solid var(--border); padding: 0.85rem 2rem;
+      font-family: 'Space Mono', monospace;
+      font-weight: 700; font-size: 0.85rem;
+      letter-spacing: 0.04em; text-transform: uppercase;
+      cursor: pointer; border-radius: 6px;
+      transition: border-color 0.2s, color 0.2s;
+    }
+    .btn-secondary:hover { border-color: var(--accent); color: var(--accent); }
+
+    /* stats row */
+    .hero-stats {
+      margin-top: 4rem;
+      display: flex; gap: 3rem; flex-wrap: wrap; justify-content: center;
+      animation: fadeSlide 0.8s 0.4s ease both;
+    }
+    .stat { text-align: center; }
+    .stat-num {
+      font-family: 'Syne', sans-serif;
+      font-size: 2rem; font-weight: 800;
+      color: var(--accent);
+    }
+    .stat-lbl {
+      font-family: 'Space Mono', monospace;
+      font-size: 0.65rem; letter-spacing: 0.1em;
+      text-transform: uppercase; color: var(--muted);
+      margin-top: 0.2rem;
+    }
+
+    @keyframes fadeSlide {
+      from { opacity:0; transform: translateY(20px); }
+      to   { opacity:1; transform: translateY(0); }
+    }
+
+    /* ── SECTION TITLE ── */
+    .section-head {
+      text-align: center; margin-bottom: 3.5rem;
+    }
+    .section-tag {
+      font-family: 'Space Mono', monospace;
+      font-size: 0.65rem; letter-spacing: 0.15em; text-transform: uppercase;
+      color: var(--accent); margin-bottom: 0.8rem;
+    }
+    .section-head h2 {
+      font-family: 'Syne', sans-serif;
+      font-size: clamp(1.8rem, 4vw, 3rem);
+      font-weight: 800; letter-spacing: -0.03em;
+    }
+    .section-head p {
+      margin-top: 0.8rem; color: var(--muted);
+      max-width: 480px; margin-inline: auto; line-height: 1.6;
+    }
+
+    /* ── SERVICES ── */
+    #services { padding: 6rem 1.5rem; }
+    .services-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1.5px;
+      max-width: 1200px; margin-inline: auto;
+      border: 1.5px solid var(--border);
+      border-radius: 16px; overflow: hidden;
+    }
+    .service-card {
+      background: var(--surface);
+      padding: 2rem;
+      border-right: 1.5px solid var(--border);
+      border-bottom: 1.5px solid var(--border);
+      transition: background 0.25s, transform 0.2s;
+      cursor: pointer; position: relative; overflow: hidden;
+    }
+    .service-card::before {
+      content: '';
+      position: absolute; inset: 0;
+      background: linear-gradient(135deg, rgba(0,212,255,0.04) 0%, transparent 60%);
+      opacity: 0; transition: opacity 0.3s;
+    }
+    .service-card:hover { background: var(--surface2); }
+    .service-card:hover::before { opacity: 1; }
+    .service-icon {
+      width: 48px; height: 48px;
+      border-radius: 12px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.4rem; margin-bottom: 1.2rem;
+    }
+    .service-card h3 {
+      font-family: 'Syne', sans-serif;
+      font-size: 1.1rem; font-weight: 700; margin-bottom: 0.5rem;
+    }
+    .service-card p {
+      font-size: 0.875rem; color: var(--muted); line-height: 1.6;
+    }
+    .service-tag {
+      display: inline-block; margin-top: 1rem;
+      font-family: 'Space Mono', monospace;
+      font-size: 0.6rem; letter-spacing: 0.1em; text-transform: uppercase;
+      padding: 0.25rem 0.6rem; border-radius: 4px;
+    }
+
+    /* ── AI CHAT DEMO ── */
+    #demo { padding: 6rem 1.5rem; }
+    .demo-wrap {
+      max-width: 900px; margin-inline: auto;
+      display: grid; grid-template-columns: 1fr 1fr; gap: 2rem;
+      align-items: start;
+    }
+    .demo-info h2 {
+      font-family: 'Syne', sans-serif;
+      font-size: clamp(1.6rem, 3vw, 2.5rem);
+      font-weight: 800; letter-spacing: -0.03em;
+      margin-bottom: 1rem;
+    }
+    .demo-info p { color: var(--muted); line-height: 1.7; margin-bottom: 1rem; }
+    .feature-list { list-style: none; }
+    .feature-list li {
+      font-size: 0.875rem; color: var(--muted);
+      padding: 0.5rem 0;
+      border-bottom: 1px solid var(--border);
+      display: flex; align-items: center; gap: 0.6rem;
+    }
+    .feature-list li::before {
+      content: '→';
+      font-family: 'Space Mono', monospace;
+      color: var(--accent); font-size: 0.8rem;
+    }
+
+    .chat-box {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 16px; overflow: hidden;
+    }
+    .chat-header {
+      background: var(--surface2);
+      padding: 1rem 1.2rem;
+      border-bottom: 1px solid var(--border);
+      display: flex; align-items: center; gap: 0.75rem;
+    }
+    .chat-avatar {
+      width: 32px; height: 32px; border-radius: 50%;
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.85rem;
+    }
+    .chat-title { font-family: 'Syne', sans-serif; font-size: 0.95rem; font-weight: 700; }
+    .chat-status {
+      font-family: 'Space Mono', monospace;
+      font-size: 0.6rem; color: #22c55e; letter-spacing: 0.08em;
+    }
+    .online-dot {
+      width: 6px; height: 6px; background: #22c55e; border-radius: 50%;
+      display: inline-block; margin-right: 0.3rem;
+      animation: pulse 2s infinite;
+    }
+    .chat-msgs {
+      padding: 1.2rem; min-height: 280px;
+      display: flex; flex-direction: column; gap: 0.8rem;
+      overflow-y: auto; max-height: 320px;
+    }
+    .msg { max-width: 85%; }
+    .msg.ai { align-self: flex-start; }
+    .msg.user { align-self: flex-end; }
+    .msg-bubble {
+      padding: 0.65rem 1rem;
+      border-radius: 12px;
+      font-size: 0.85rem; line-height: 1.5;
+    }
+    .msg.ai .msg-bubble {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      color: var(--text);
+      border-bottom-left-radius: 4px;
+    }
+    .msg.user .msg-bubble {
+      background: linear-gradient(135deg, var(--accent2), #6d28d9);
+      color: white;
+      border-bottom-right-radius: 4px;
+    }
+    .chat-input-row {
+      padding: 1rem 1.2rem;
+      border-top: 1px solid var(--border);
+      display: flex; gap: 0.6rem;
+    }
+    .chat-input {
+      flex: 1; background: var(--surface2);
+      border: 1px solid var(--border); border-radius: 8px;
+      padding: 0.6rem 0.9rem; color: var(--text);
+      font-family: 'Outfit', sans-serif; font-size: 0.85rem;
+      outline: none; transition: border-color 0.2s;
+    }
+    .chat-input:focus { border-color: var(--accent); }
+    .chat-input::placeholder { color: var(--muted); }
+    .chat-send {
+      background: var(--accent); color: #000;
+      border: none; border-radius: 8px;
+      padding: 0.6rem 1rem;
+      font-family: 'Space Mono', monospace;
+      font-size: 0.75rem; font-weight: 700;
+      cursor: pointer; transition: box-shadow 0.2s;
+    }
+    .chat-send:hover { box-shadow: 0 0 16px rgba(0,212,255,0.4); }
+
+    /* ── FEATURES BENTO ── */
+    #features { padding: 6rem 1.5rem; }
+    .bento {
+      max-width: 1100px; margin-inline: auto;
+      display: grid;
+      grid-template-columns: repeat(12, 1fr);
+      grid-auto-rows: 160px;
+      gap: 1rem;
+    }
+    .bento-cell {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 1.5rem;
+      position: relative; overflow: hidden;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .bento-cell:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 12px 40px rgba(0,0,0,0.4), var(--glow);
+    }
+    .bento-cell .ico { font-size: 1.8rem; margin-bottom: 0.7rem; }
+    .bento-cell h3 {
+      font-family: 'Syne', sans-serif;
+      font-size: 1rem; font-weight: 700; margin-bottom: 0.3rem;
+    }
+    .bento-cell p { font-size: 0.8rem; color: var(--muted); line-height: 1.5; }
+    .bc-1 { grid-column: span 4; }
+    .bc-2 { grid-column: span 4; }
+    .bc-3 { grid-column: span 4; }
+    .bc-4 { grid-column: span 6; grid-row: span 2; }
+    .bc-5 { grid-column: span 3; }
+    .bc-6 { grid-column: span 3; }
+    .bc-7 { grid-column: span 6; }
+    .bc-accent { background: linear-gradient(135deg, rgba(0,212,255,0.1), rgba(124,58,237,0.1)); }
+
+    /* ── PRICING ── */
+    #pricing { padding: 6rem 1.5rem; }
+    .pricing-grid {
+      max-width: 900px; margin-inline: auto;
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 1.5rem;
+    }
+    .price-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 16px; padding: 2rem;
+      position: relative; transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .price-card:hover { transform: translateY(-4px); box-shadow: 0 20px 60px rgba(0,0,0,0.4); }
+    .price-card.featured {
+      border-color: var(--accent);
+      box-shadow: 0 0 40px rgba(0,212,255,0.15);
+    }
+    .price-label {
+      font-family: 'Space Mono', monospace;
+      font-size: 0.65rem; letter-spacing: 0.12em;
+      text-transform: uppercase; color: var(--muted);
+      margin-bottom: 0.5rem;
+    }
+    .price-card.featured .price-label { color: var(--accent); }
+    .price-amt {
+      font-family: 'Syne', sans-serif;
+      font-size: 2.8rem; font-weight: 800;
+      margin: 0.5rem 0;
+    }
+    .price-amt span { font-size: 1rem; color: var(--muted); font-weight: 400; }
+    .price-card ul { list-style: none; margin: 1.5rem 0; }
+    .price-card ul li {
+      font-size: 0.875rem; color: var(--muted);
+      padding: 0.4rem 0;
+      display: flex; align-items: center; gap: 0.5rem;
+    }
+    .price-card ul li::before { content: '✓'; color: var(--accent); font-weight: 700; }
+    .price-btn {
+      width: 100%; padding: 0.8rem;
+      font-family: 'Space Mono', monospace;
+      font-size: 0.8rem; font-weight: 700;
+      letter-spacing: 0.05em; text-transform: uppercase;
+      border-radius: 8px; cursor: pointer;
+      transition: all 0.2s;
+    }
+    .price-btn.outline {
+      background: transparent; color: var(--text);
+      border: 1px solid var(--border);
+    }
+    .price-btn.outline:hover { border-color: var(--accent); color: var(--accent); }
+    .price-btn.filled {
+      background: var(--accent); color: #000; border: none;
+    }
+    .price-btn.filled:hover { box-shadow: 0 0 20px rgba(0,212,255,0.4); }
+    .badge-pop {
+      position: absolute; top: -12px; left: 50%; transform: translateX(-50%);
+      background: var(--accent); color: #000;
+      font-family: 'Space Mono', monospace;
+      font-size: 0.6rem; font-weight: 700;
+      letter-spacing: 0.1em; text-transform: uppercase;
+      padding: 0.25rem 0.8rem; border-radius: 999px;
+    }
+
+    /* ── ABOUT / CONTACT ── */
+    #contact { padding: 6rem 1.5rem; }
+    .contact-wrap {
+      max-width: 900px; margin-inline: auto;
+      display: grid; grid-template-columns: 1fr 1fr; gap: 3rem;
+      align-items: start;
+    }
+    .about-block h2 {
+      font-family: 'Syne', sans-serif;
+      font-size: clamp(1.6rem, 3vw, 2.3rem);
+      font-weight: 800; letter-spacing: -0.03em;
+      margin-bottom: 1.2rem;
+    }
+    .about-block p { color: var(--muted); line-height: 1.75; margin-bottom: 1rem; font-size: 0.9rem; }
+    .dev-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 16px; padding: 1.5rem;
+    }
+    .dev-avatar {
+      width: 64px; height: 64px; border-radius: 50%;
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.6rem; margin-bottom: 1rem;
+    }
+    .dev-name {
+      font-family: 'Syne', sans-serif;
+      font-size: 1.2rem; font-weight: 800; margin-bottom: 0.2rem;
+    }
+    .dev-title {
+      font-family: 'Space Mono', monospace;
+      font-size: 0.65rem; letter-spacing: 0.1em;
+      text-transform: uppercase; color: var(--accent);
+      margin-bottom: 1.2rem;
+    }
+    .dev-info { list-style: none; }
+    .dev-info li {
+      display: flex; align-items: center; gap: 0.6rem;
+      font-size: 0.82rem; color: var(--muted);
+      padding: 0.5rem 0;
+      border-bottom: 1px solid var(--border);
+    }
+    .dev-info li:last-child { border-bottom: none; }
+    .dev-info li a { color: var(--accent); text-decoration: none; }
+    .dev-info li a:hover { text-decoration: underline; }
+
+    /* CONTACT FORM */
+    .contact-form-block h3 {
+      font-family: 'Syne', sans-serif;
+      font-size: 1.3rem; font-weight: 700; margin-bottom: 1.5rem;
+    }
+    .form-group { margin-bottom: 1rem; }
+    .form-group label {
+      display: block;
+      font-family: 'Space Mono', monospace;
+      font-size: 0.65rem; letter-spacing: 0.1em;
+      text-transform: uppercase; color: var(--muted);
+      margin-bottom: 0.4rem;
+    }
+    .form-group input,
+    .form-group textarea,
+    .form-group select {
+      width: 100%;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 0.65rem 0.9rem;
+      color: var(--text);
+      font-family: 'Outfit', sans-serif; font-size: 0.875rem;
+      outline: none; transition: border-color 0.2s;
+    }
+    .form-group input:focus,
+    .form-group textarea:focus,
+    .form-group select:focus { border-color: var(--accent); }
+    .form-group textarea { resize: vertical; min-height: 100px; }
+    .form-group select option { background: var(--surface2); }
+    .form-submit {
+      width: 100%;
+      background: var(--accent); color: #000;
+      border: none; padding: 0.85rem;
+      font-family: 'Space Mono', monospace;
+      font-weight: 700; font-size: 0.8rem;
+      letter-spacing: 0.06em; text-transform: uppercase;
+      border-radius: 8px; cursor: pointer;
+      transition: box-shadow 0.2s;
+    }
+    .form-submit:hover { box-shadow: 0 0 24px rgba(0,212,255,0.4); }
+
+    /* ── FOOTER ── */
+    footer {
+      position: relative; z-index: 1;
+      border-top: 1px solid var(--border);
+      padding: 2rem 2rem;
+      display: flex; align-items: center; justify-content: space-between;
+      flex-wrap: wrap; gap: 1rem;
+    }
+    .footer-brand {
+      font-family: 'Syne', sans-serif;
+      font-size: 1rem; font-weight: 800;
+    }
+    .footer-brand span { color: var(--accent); }
+    .footer-copy {
+      font-family: 'Space Mono', monospace;
+      font-size: 0.65rem; color: var(--muted);
+      letter-spacing: 0.06em;
+    }
+    .footer-links { display: flex; gap: 1.5rem; }
+    .footer-links a {
+      font-family: 'Space Mono', monospace;
+      font-size: 0.65rem; color: var(--muted);
+      text-decoration: none; letter-spacing: 0.06em;
+      text-transform: uppercase;
+      transition: color 0.2s;
+    }
+    .footer-links a:hover { color: var(--accent); }
+
+    /* ── SCROLL REVEAL ── */
+    .reveal { opacity: 0; transform: translateY(30px); transition: opacity 0.7s ease, transform 0.7s ease; }
+    .reveal.visible { opacity: 1; transform: none; }
+
+    /* ── MOBILE ── */
+    @media (max-width: 768px) {
+      nav { padding: 0.8rem 1rem; }
+      .nav-links { display: none; }
+      .demo-wrap { grid-template-columns: 1fr; }
+      .bento { grid-template-columns: 1fr 1fr; grid-auto-rows: 140px; }
+      .bc-1,.bc-2,.bc-3 { grid-column: span 2; }
+      .bc-4 { grid-column: span 2; grid-row: span 1; }
+      .bc-5,.bc-6 { grid-column: span 1; }
+      .bc-7 { grid-column: span 2; }
+      .contact-wrap { grid-template-columns: 1fr; }
+      footer { flex-direction: column; text-align: center; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ── NAV ── -->
+<nav>
+  <div class="nav-logo">OUERD<span>.</span>AI</div>
+  <div class="nav-links">
+    <a href="#services">Services</a>
+    <a href="#demo">Démo</a>
+    <a href="#features">Fonctions</a>
+    <a href="#pricing">Tarifs</a>
+    <a href="#contact">Contact</a>
+  </div>
+  <button class="nav-cta" onclick="document.getElementById('demo').scrollIntoView({behavior:'smooth'})">Essayer</button>
+</nav>
+
+<!-- ── HERO ── -->
+<section id="hero">
+  <div class="hero-badge">🤖 Intelligence Artificielle · Plateforme Multi-Services</div>
+  <h1>
+    <span class="line1">OUERD SERAIDI</span>
+    <span class="line2">IA Multi-Services</span>
+  </h1>
+  <p class="hero-sub">Plateforme intelligente tout-en-un pour la génération de texte, d'images, de code et bien plus — propulsée par l'IA de dernière génération.</p>
+  <div class="hero-actions">
+    <button class="btn-primary" onclick="document.getElementById('demo').scrollIntoView({behavior:'smooth'})">Commencer gratuitement</button>
+    <button class="btn-secondary" onclick="document.getElementById('services').scrollIntoView({behavior:'smooth'})">Voir les services</button>
+  </div>
+  <div class="hero-stats">
+    <div class="stat"><div class="stat-num">12+</div><div class="stat-lbl">Services IA</div></div>
+    <div class="stat"><div class="stat-num">99.9%</div><div class="stat-lbl">Disponibilité</div></div>
+    <div class="stat"><div class="stat-num">∞</div><div class="stat-lbl">Possibilités</div></div>
+    <div class="stat"><div class="stat-num">AR</div><div class="stat-lbl">Made in Algeria</div></div>
+  </div>
+</section>
+
+<!-- ── SERVICES ── -->
+<section id="services">
+  <div class="section-head reveal">
+    <div class="section-tag">// Services disponibles</div>
+    <h2>Tout ce dont vous avez besoin</h2>
+    <p>Des outils IA puissants pour chaque besoin, accessibles depuis une seule plateforme.</p>
+  </div>
+  <div class="services-grid reveal">
+
+    <div class="service-card">
+      <div class="service-icon" style="background:rgba(0,212,255,0.12)">💬</div>
+      <h3>Assistant IA Chat</h3>
+      <p>Dialoguez avec une IA avancée pour répondre à toutes vos questions, brainstormer ou obtenir de l'aide en temps réel.</p>
+      <span class="service-tag" style="background:rgba(0,212,255,0.12);color:var(--accent)">Chat · NLP</span>
+    </div>
+
+    <div class="service-card">
+      <div class="service-icon" style="background:rgba(124,58,237,0.12)">🎨</div>
+      <h3>Génération d'images</h3>
+      <p>Créez des images époustouflantes à partir de simples descriptions textuelles grâce à l'IA générative.</p>
+      <span class="service-tag" style="background:rgba(124,58,237,0.12);color:var(--accent2)">Image · Diffusion</span>
+    </div>
+
+    <div class="service-card">
+      <div class="service-icon" style="background:rgba(245,158,11,0.12)">💻</div>
+      <h3>Génération de code</h3>
+      <p>Générez, corrigez et expliquez du code dans tous les langages de programmation populaires.</p>
+      <span class="service-tag" style="background:rgba(245,158,11,0.12);color:var(--accent3)">Code · Dev</span>
+    </div>
+
+    <div class="service-card">
+      <div class="service-icon" style="background:rgba(34,197,94,0.12)">✍️</div>
+      <h3>Rédaction & Contenu</h3>
+      <p>Articles de blog, emails, posts réseaux sociaux, scripts — créez du contenu professionnel en secondes.</p>
+      <span class="service-tag" style="background:rgba(34,197,94,0.12);color:#22c55e">Texte · SEO</span>
+    </div>
+
+    <div class="service-card">
+      <div class="service-icon" style="background:rgba(239,68,68,0.12)">🔊</div>
+      <h3>Synthèse vocale</h3>
+      <p>Transformez n'importe quel texte en voix naturelle dans de nombreuses langues et accents différents.</p>
+      <span class="service-tag" style="background:rgba(239,68,68,0.12);color:#ef4444">Voix · Audio</span>
+    </div>
+
+    <div class="service-card">
+      <div class="service-icon" style="background:rgba(168,85,247,0.12)">🌐</div>
+      <h3>Traduction IA</h3>
+      <p>Traduisez instantanément des textes dans plus de 100 langues avec une précision contextuelle remarquable.</p>
+      <span class="service-tag" style="background:rgba(168,85,247,0.12);color:#a855f7">Traduction · i18n</span>
+    </div>
+
+    <div class="service-card">
+      <div class="service-icon" style="background:rgba(6,182,212,0.12)">📊</div>
+      <h3>Analyse de données</h3>
+      <p>Importez vos données et obtenez des insights intelligents, des visualisations et des recommandations.</p>
+      <span class="service-tag" style="background:rgba(6,182,212,0.12);color:#06b6d4">Data · Analytics</span>
+    </div>
+
+    <div class="service-card">
+      <div class="service-icon" style="background:rgba(249,115,22,0.12)">📋</div>
+      <h3>Résumé de documents</h3>
+      <p>Uploadez des PDF, Word ou texte brut et obtenez un résumé clair et structuré en quelques secondes.</p>
+      <span class="service-tag" style="background:rgba(249,115,22,0.12);color:#f97316">PDF · Résumé</span>
+    </div>
+
+    <div class="service-card">
+      <div class="service-icon" style="background:rgba(16,185,129,0.12)">🤖</div>
+      <h3>Chatbot personnalisé</h3>
+      <p>Créez et déployez votre propre assistant IA entraîné sur vos données pour votre site ou application.</p>
+      <span class="service-tag" style="background:rgba(16,185,129,0.12);color:#10b981">Bot · API</span>
+    </div>
+
+  </div>
+</section>
+
+<!-- ── DEMO ── -->
+<section id="demo">
+  <div class="demo-wrap reveal" style="max-width:1000px;margin-inline:auto;padding:0 1.5rem">
+    <div class="demo-info">
+      <div class="section-tag">// Démo interactive</div>
+      <h2>Essayez l'assistant IA en direct</h2>
+      <p>Notre IA comprend le français, l'arabe et l'anglais. Posez vos questions, demandez du contenu, ou laissez-vous guider.</p>
+      <ul class="feature-list">
+        <li>Réponses ultra-rapides en temps réel</li>
+        <li>Support multilingue (FR · AR · EN)</li>
+        <li>Mémoire contextuelle de la conversation</li>
+        <li>Intégration API disponible</li>
+        <li>Aucune inscription requise pour la démo</li>
+      </ul>
+    </div>
+    <div class="chat-box">
+      <div class="chat-header">
+        <div class="chat-avatar">🤖</div>
+        <div>
+          <div class="chat-title">OUERD AI Assistant</div>
+          <div class="chat-status"><span class="online-dot"></span>En ligne — Prêt</div>
+        </div>
+      </div>
+      <div class="chat-msgs" id="chatMsgs">
+        <div class="msg ai">
+          <div class="msg-bubble">Bonjour ! Je suis OUERD AI, votre assistant intelligent. Comment puis-je vous aider aujourd'hui ? 😊</div>
+        </div>
+        <div class="msg user">
+          <div class="msg-bubble">Génère-moi une description marketing pour un café algérien.</div>
+        </div>
+        <div class="msg ai">
+          <div class="msg-bubble">☕ Voici votre description :<br><br><em>"Plongez dans les saveurs authentiques de l'Algérie. Notre café, torréfié selon des traditions séculaires, vous offre une expérience unique — riche, intense et inoubliable. Chaque tasse raconte l'histoire de notre terroir."</em></div>
+        </div>
+      </div>
+      <div class="chat-input-row">
+        <input class="chat-input" id="chatInput" type="text" placeholder="Écrivez votre message..." />
+        <button class="chat-send" id="chatSend">Envoyer</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── FEATURES BENTO ── -->
+<section id="features" style="padding:6rem 1.5rem">
+  <div class="section-head reveal">
+    <div class="section-tag">// Pourquoi nous choisir</div>
+    <h2>Des fonctionnalités uniques</h2>
+    <p>Une plateforme construite avec rigueur pour répondre aux besoins réels des utilisateurs algériens et francophones.</p>
+  </div>
+  <div class="bento reveal">
+    <div class="bento-cell bc-1 bc-accent">
+      <div class="ico">⚡</div>
+      <h3>Ultra-rapide</h3>
+      <p>Réponses en moins de 2 secondes grâce à notre infrastructure optimisée.</p>
+    </div>
+    <div class="bento-cell bc-2">
+      <div class="ico">🔒</div>
+      <h3>100% Sécurisé</h3>
+      <p>Vos données sont chiffrées et ne sont jamais partagées avec des tiers.</p>
+    </div>
+    <div class="bento-cell bc-3">
+      <div class="ico">🌍</div>
+      <h3>Multilingue</h3>
+      <p>Arabe, français, anglais et plus de 50 langues supportées nativement.</p>
+    </div>
+    <div class="bento-cell bc-4" style="background:linear-gradient(135deg,rgba(0,212,255,0.08),rgba(124,58,237,0.08));display:flex;flex-direction:column;justify-content:center">
+      <div class="ico">🇩🇿</div>
+      <h3 style="font-size:1.3rem">Fait en Algérie</h3>
+      <p style="font-size:0.9rem;margin-top:0.5rem">Développé à Ksar El Boukharie par Ouerd Seraidi — une solution locale pour des besoins globaux. Disponible 24h/24, 7j/7.</p>
+    </div>
+    <div class="bento-cell bc-5">
+      <div class="ico">🔌</div>
+      <h3>API REST</h3>
+      <p>Intégrez nos services dans vos propres applications facilement.</p>
+    </div>
+    <div class="bento-cell bc-6">
+      <div class="ico">📱</div>
+      <h3>Mobile-first</h3>
+      <p>Optimisé pour tous les appareils, du mobile au desktop.</p>
+    </div>
+    <div class="bento-cell bc-7">
+      <div class="ico">🎓</div>
+      <h3>Facile à prendre en main</h3>
+      <p>Interface intuitive, documentation complète et support réactif. Commencez en moins de 5 minutes sans aucune compétence technique requise.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ── PRICING ── -->
+<section id="pricing">
+  <div class="section-head reveal">
+    <div class="section-tag">// Tarifs transparents</div>
+    <h2>Choisissez votre plan</h2>
+    <p>Des tarifs adaptés à tous les profils, des particuliers aux entreprises.</p>
+  </div>
+  <div class="pricing-grid reveal">
+
+    <div class="price-card">
+      <div class="price-label">Starter</div>
+      <div class="price-amt">Gratuit <span>/ toujours</span></div>
+      <ul>
+        <li>50 messages / jour</li>
+        <li>5 images générées / mois</li>
+        <li>Traduction basique</li>
+        <li>Accès au chat IA</li>
+      </ul>
+      <button class="price-btn outline">Commencer</button>
+    </div>
+
+    <div class="price-card featured">
+      <div class="badge-pop">⭐ POPULAIRE</div>
+      <div class="price-label">Pro</div>
+      <div class="price-amt">990 <span>DA / mois</span></div>
+      <ul>
+        <li>Messages illimités</li>
+        <li>100 images / mois</li>
+        <li>Génération de code avancée</li>
+        <li>Résumé de documents PDF</li>
+        <li>Synthèse vocale</li>
+        <li>Traduction 100+ langues</li>
+      </ul>
+      <button class="price-btn filled">S'abonner</button>
+    </div>
+
+    <div class="price-card">
+      <div class="price-label">Entreprise</div>
+      <div class="price-amt">Sur devis</div>
+      <ul>
+        <li>Tout le plan Pro</li>
+        <li>API REST complète</li>
+        <li>Chatbot personnalisé</li>
+        <li>Support prioritaire</li>
+        <li>Formation incluse</li>
+        <li>SLA garanti 99.9%</li>
+      </ul>
+      <button class="price-btn outline">Nous contacter</button>
+    </div>
+
+  </div>
+</section>
+
+<!-- ── CONTACT ── -->
+<section id="contact">
+  <div class="contact-wrap reveal">
+    <div class="about-block">
+      <div class="section-tag">// À propos & Contact</div>
+      <h2>Le développeur derrière la plateforme</h2>
+      <p>OUERD SERAIDI est une plateforme IA multi-services développée avec passion à Ksar El Boukharie, Algérie. Notre mission : rendre l'intelligence artificielle accessible à tous les francophones et arabophones.</p>
+      <p>Que vous soyez entrepreneur, étudiant, développeur ou créateur — nous avons les outils qu'il vous faut.</p>
+
+      <div class="dev-card" style="margin-top:1.5rem">
+        <div class="dev-avatar">👨‍💻</div>
+        <div class="dev-name">Ouerd Seraidi</div>
+        <div class="dev-title">Développeur & Fondateur · Ksar El Boukharie</div>
+        <ul class="dev-info">
+          <li>
+            <span>📧</span>
+            <a href="mailto:apolo2211@gmail.com">apolo2211@gmail.com</a>
+          </li>
+          <li>
+            <span>📱</span>
+            <a href="https://wa.me/213675137284" target="_blank">WhatsApp : +213 675 137 284</a>
+          </li>
+          <li>
+            <span>📍</span>
+            <span>Ksar El Boukharie, Médéa, Algérie 🇩🇿</span>
+          </li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="contact-form-block">
+      <h3>Envoyez-nous un message</h3>
+      <form onsubmit="handleForm(event)">
+        <div class="form-group">
+          <label>Votre nom</label>
+          <input type="text" placeholder="Ex : Ahmed Benali" required />
+        </div>
+        <div class="form-group">
+          <label>Email</label>
+          <input type="email" placeholder="votre@email.com" required />
+        </div>
+        <div class="form-group">
+          <label>Service concerné</label>
+          <select>
+            <option>Assistant IA Chat</option>
+            <option>Génération d'images</option>
+            <option>Génération de code</option>
+            <option>Rédaction & Contenu</option>
+            <option>Plan Entreprise / API</option>
+            <option>Autre</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Votre message</label>
+          <textarea placeholder="Décrivez votre besoin ou posez votre question..." required></textarea>
+        </div>
+        <button type="submit" class="form-submit">Envoyer le message ✉️</button>
+      </form>
+    </div>
+  </div>
+</section>
+
+<!-- ── FOOTER ── -->
+<footer>
+  <div class="footer-brand">OUERD<span>.AI</span></div>
+  <div class="footer-copy">© 2025 Ouerd Seraidi · Ksar El Boukharie, Algérie 🇩🇿</div>
+  <div class="footer-links">
+    <a href="#services">Services</a>
+    <a href="#pricing">Tarifs</a>
+    <a href="mailto:apolo2211@gmail.com">Email</a>
+    <a href="https://wa.me/213675137284">WhatsApp</a>
+  </div>
+</footer>
+
+<script>
+  // ── SCROLL REVEAL ──
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); } });
+  }, { threshold: 0.1 });
+  document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+  // ── CHAT DEMO ──
+  const msgs = document.getElementById('chatMsgs');
+  const input = document.getElementById('chatInput');
+  const btn = document.getElementById('chatSend');
+
+  const replies = [
+    "Excellente question ! Voici ma réponse détaillée basée sur les dernières données disponibles...",
+    "Je vais vous aider avec ça. Voici une analyse complète de votre demande ✨",
+    "Bien sûr ! En tant qu'assistant IA, je peux vous proposer plusieurs approches pour répondre à ce besoin.",
+    "Votre demande est traitée. Voici le contenu généré spécialement pour vous 🚀",
+    "C'est noté ! Je génère une réponse optimisée pour votre cas d'usage spécifique.",
+    "مرحباً! يمكنني أيضاً الرد باللغة العربية إذا كنت تفضل ذلك 🌟",
+    "Hello! I can respond in English as well. OUERD AI is fully multilingual.",
+  ];
+
+  function addMsg(text, who) {
+    const d = document.createElement('div');
+    d.className = `msg ${who}`;
+    d.innerHTML = `<div class="msg-bubble">${text}</div>`;
+    msgs.appendChild(d);
+    msgs.scrollTop = msgs.scrollHeight;
+  }
+
+  function typing() {
+    const d = document.createElement('div');
+    d.className = 'msg ai';
+    d.id = 'typing';
+    d.innerHTML = `<div class="msg-bubble" style="color:var(--muted)">⏳ En train de répondre...</div>`;
+    msgs.appendChild(d);
+    msgs.scrollTop = msgs.scrollHeight;
+  }
+
+  function sendMsg() {
+    const val = input.value.trim();
+    if (!val) return;
+    addMsg(val, 'user');
+    input.value = '';
+    typing();
+    setTimeout(() => {
+      document.getElementById('typing')?.remove();
+      addMsg(replies[Math.floor(Math.random() * replies.length)], 'ai');
+    }, 1200);
+  }
+
+  btn.addEventListener('click', sendMsg);
+  input.addEventListener('keydown', e => { if (e.key === 'Enter') sendMsg(); });
+
+  // ── FORM SUBMIT ──
+  function handleForm(e) {
+    e.preventDefault();
+    const btn = e.target.querySelector('.form-submit');
+    btn.textContent = '✅ Message envoyé !';
+    btn.style.background = '#22c55e';
+    setTimeout(() => {
+      btn.textContent = 'Envoyer le message ✉️';
+      btn.style.background = '';
+      e.target.reset();
+    }, 3000);
+  }
+</script>
+</body>
+</html>
